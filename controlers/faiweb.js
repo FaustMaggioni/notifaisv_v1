@@ -21,6 +21,9 @@ const setNoticias = async () => {
 
 export const updateNoticias = async (req, res) => {
     console.log('Got /events');
+    if (noticias.length == 0) {
+        await setNoticias()
+    }
     res.set({
         'Cache-Control': 'no-cache',
         'Content-Type': 'text/event-stream',
@@ -33,7 +36,7 @@ export const updateNoticias = async (req, res) => {
         if (await cambio()) {
             res.write(`data:${noticias}\n\n`)
         }
-    }, 5000)
+    }, 15000)
 };
 
 const cambio = async () => {
@@ -55,5 +58,8 @@ const cambio = async () => {
         return false
     }
 }
+
+
+
 
 
