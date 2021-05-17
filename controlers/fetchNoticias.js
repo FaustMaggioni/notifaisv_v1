@@ -12,7 +12,6 @@ const fetchNoticias = async () => {
         for (let noticia of elements) {
             let ref = noticia.href;
             let titulo = noticia.innerHTML;
-            let palabras = titulo.split('\n', '\t')
             let obj = {
                 title: titulo.trim(),
                 link: ref,

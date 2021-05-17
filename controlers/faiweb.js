@@ -1,6 +1,6 @@
 import fetchNoticias from './fetchNoticias.js'
 
-let noticias = []
+const noticias = { data: [] }
 let prevNoticias = []
 
 export const getNoticias = async (req, res) => {
@@ -14,16 +14,16 @@ export const getNoticias = async (req, res) => {
 }
 
 const setNoticias = async () => {
-    if (noticias.length == 0) {
-        noticias = await fetchNoticias()
+    if (noticias.data.length == 0) {
+        let arr = await fetchNoticias()
+        noticias.data = arr
+        console.log('noticias.data: ', noticias.data)
     }
 }
 
 export const updateNoticias = async (req, res) => {
     console.log('Got /events');
-    if (noticias.length == 0) {
-        await setNoticias()
-    }
+    await setNoticias()
     res.set({
         'Cache-Control': 'no-cache',
         'Content-Type': 'text/event-stream',
@@ -34,23 +34,23 @@ export const updateNoticias = async (req, res) => {
     res.write('retry: 10000\n\n');
     setInterval(async () => {
         if (await cambio()) {
-            res.write(`data:${noticias}\n\n`)
+            console.log(noticias)
+            res.write(JSON.stringify(noticias))
         }
-    }, 15000)
+    }, 5 * 1000)
 };
 
 const cambio = async () => {
     // let update = await fetchNoticias()
-    let update = [...noticias, { title: 'prueba', link: '', new: false }]
-    let aux = [...noticias]
-    console.log('Aux: ', aux)
+    let update = [...noticias.data, { title: 'prueba', link: '', new: false }]
+    let aux = [...noticias.data]
     if (update !== aux) {
         console.log('distinct')
-        noticias = update.map((item) => {
+        noticias.data = update.map((item) => {
             if (aux.includes(item)) {
-                return item
+                return (item)
             } else {
-                return { ...item, new: true }
+                return ({ ...item, new: true })
             }
         })
         return true
