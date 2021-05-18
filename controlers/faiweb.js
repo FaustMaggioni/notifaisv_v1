@@ -1,7 +1,11 @@
 import fetchNoticias from './fetchNoticias.js'
+import ReadWriteLock from 'rwlock'
 
 const noticias = { data: [] }
-let prevNoticias = []
+const lock = new ReadWriteLock()
+
+let update = []
+let listening = false
 
 export const getNoticias = async (req, res) => {
     try {
@@ -34,18 +38,15 @@ export const updateNoticias = async (req, res) => {
     res.write('retry: 10000\n\n');
     setInterval(async () => {
         if (await cambio()) {
-            console.log(noticias)
-            res.write(JSON.stringify(noticias))
+            res.write(`data:${JSON.stringify(noticias.data)}\n\n`)
         }
-    }, 5 * 1000)
+    }, 12 * 60 * 60 * 1000)
 };
 
 const cambio = async () => {
-    // let update = await fetchNoticias()
-    let update = [...noticias.data, { title: 'prueba', link: '', new: false }]
+    update = await fetchNoticias()
     let aux = [...noticias.data]
     if (update !== aux) {
-        console.log('distinct')
         noticias.data = update.map((item) => {
             if (aux.includes(item)) {
                 return (item)
@@ -54,10 +55,10 @@ const cambio = async () => {
             }
         })
         return true
-    } else {
-        return false
     }
+    return false
 }
+
 
 
 
