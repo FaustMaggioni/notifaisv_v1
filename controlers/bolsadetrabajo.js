@@ -21,7 +21,7 @@ const setTrabajos = async () => {
 }
 
 export const updateTrabajos = async (req, res) => {
-    console.log('Got /events');
+    console.log('Got /trabajos/update');
     await setTrabajos()
     res.set({
         'Cache-Control': 'no-cache',
@@ -33,6 +33,7 @@ export const updateTrabajos = async (req, res) => {
     res.write('retry: 10000\n\n');
     setInterval(async () => {
         if (await cambio()) {
+            console.log('sending')
             res.write(`data:${JSON.stringify(trabajos.data)}\n\n`)
         }
     }, 12 * 60 * 60 * 1000)
