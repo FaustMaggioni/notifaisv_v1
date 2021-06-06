@@ -23,7 +23,7 @@ app.get('/', (req,res)=>{
     res.send('-Hello there -General Kenobiiiiiii')
 })
 
-app.listen(port, async () => {
+app.listen(port,() => {
     console.log('Escuchando')
 })
 
