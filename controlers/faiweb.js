@@ -1,11 +1,8 @@
 import fetchNoticias from './fetchNoticias.js'
-import ReadWriteLock from 'rwlock'
 
 const noticias = { data: [] }
-const lock = new ReadWriteLock()
 
 let update = []
-let listening = false
 
 export const getNoticias = async (req, res) => {
     try {
